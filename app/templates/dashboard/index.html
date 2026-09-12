@@ -1,29 +1,78 @@
 {% extends 'base.html' %}
 
-{% block title %}Status{% endblock %}
+{% block title %}Nexum Status{% endblock %}
 
 {% block content %}
-  <div class="card">
-    <h1>Dashboard / Status</h1>
-    <p class="muted">Seu espaço de evolução pessoal.</p>
+  <div class="dashboard-shell">
+    <section class="card hero-panel">
+      <div class="identity-row">
+        <div>
+          <p class="eyebrow">NEXUM // STATUS</p>
+          <h1>{{ user_name }}</h1>
+        </div>
+        <div class="badge-rank">Rank {{ progress.rank }}</div>
+      </div>
 
-    <div class="row">
-      <div class="card" style="flex:1; min-width:220px;">
-        <p class="muted">Usuário</p>
-        <h3>{{ current_user.profile.name }}</h3>
+      <div class="stats-grid">
+        <div class="stat-block">
+          <span class="label">Level</span>
+          <strong>{{ progress.level }}</strong>
+        </div>
+        <div class="stat-block">
+          <span class="label">Rank</span>
+          <strong>{{ progress.rank }}</strong>
+        </div>
+        <div class="stat-block">
+          <span class="label">XP total</span>
+          <strong>{{ progress.total_xp }} XP</strong>
+        </div>
       </div>
-      <div class="card" style="flex:1; min-width:220px;">
-        <p class="muted">Status</p>
-        <h3>Autenticado</h3>
-      </div>
-      <div class="card" style="flex:1; min-width:220px;">
-        <p class="muted">Sessão</p>
-        <h3>Ativa</h3>
-      </div>
-    </div>
 
-    <div style="margin-top: 24px;">
-      <p class="muted">Esta é uma página inicial protegida para validar autenticação e fluxo básico do sistema.</p>
-    </div>
+      <div class="xp-panel">
+        <div class="xp-meta">
+          <span>XP no nível</span>
+          <span>{{ xp_current }} / {{ xp_next }} XP</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width: {{ progress_percent }}%;"></div>
+        </div>
+        <div class="xp-meta secondary">
+          <span>Próximo nível</span>
+          <span>{{ progress_percent|round(1) }}%</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="module-grid">
+      <article class="card module-card">
+        <span class="module-tag">Finanças</span>
+        <h3>Em breve</h3>
+        <p>Expansão do núcleo de controle pessoal.</p>
+      </article>
+
+      <article class="card module-card">
+        <span class="module-tag">Corpo</span>
+        <h3>Em breve</h3>
+        <p>Desenvolvimento físico e bem-estar.</p>
+      </article>
+
+      <article class="card module-card">
+        <span class="module-tag">Treinos</span>
+        <h3>Em breve</h3>
+        <p>Rotina e progresso de desempenho.</p>
+      </article>
+
+      <article class="card module-card">
+        <span class="module-tag">Metas</span>
+        <h3>Em breve</h3>
+        <p>Objetivos e evolução contínua.</p>
+      </article>
+
+      <article class="card module-card">
+        <span class="module-tag">Missões</span>
+        <h3>Em breve</h3>
+        <p>Desafios e recompensas do Nexum.</p>
+      </article>
+    </section>
   </div>
 {% endblock %}
