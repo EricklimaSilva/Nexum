@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}Finance | Nexum{% endblock %}
+
+{% block content %}
+  <div class="dashboard-shell">
+    <section class="card hero-panel">
+      <div class="identity-row">
+        <div>
+          <p class="eyebrow">NEXUM // FINANCE</p>
+          <h1>Safe Spend</h1>
+        </div>
+        <div class="badge-rank">{{ safe_spend['daily_safe_spend'] }} / dia</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-block">
+          <span class="label">Saldo atual</span>
+          <strong>R$ {{ settings.current_balance }}</strong>
+        </div>
+        <div class="stat-block">
+          <span class="label">Próximo pagamento</span>
+          <strong>{{ safe_spend['next_payday'] }}</strong>
+        </div>
+        <div class="stat-block">
+          <span class="label">Dias restantes</span>
+          <strong>{{ safe_spend['remaining_days'] }}</strong>
+        </div>
+      </div>
+
+      <div class="xp-panel">
+        <div class="xp-meta">
+          <span>Compromissos pendentes</span>
+          <span>R$ {{ safe_spend['pending_total'] }}</span>
+        </div>
+        <div class="xp-meta">
+          <span>Protegido para poupança</span>
+          <span>R$ {{ safe_spend['protected_savings'] }}</span>
+        </div>
+        <div class="xp-meta">
+          <span>Disponível para gastar</span>
+          <span>R$ {{ safe_spend['available_to_spend'] }}</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="row">
+      <div class="card" style="flex: 1; min-width: 280px;">
+        <h2>Configurações</h2>
+        <form method="post" action="{{ url_for('finance.update_settings') }}">
+          <label>
+            Saldo atual
+            <input type="text" name="current_balance" value="{{ settings.current_balance }}" required>
+          </label>
+          <label>
+            Valor protegido
+            <input type="text" name="protected_savings" value="{{ settings.protected_savings }}" required>
+          </label>
+          <label>
+            Primeiro payday
+            <input type="number" name="payday_first" min="1" max="31" value="{{ settings.payday_first }}" required>
+          </label>
+          <label>
+            Segundo payday
+            <input type="number" name="payday_second" min="1" max="31" value="{{ settings.payday_second }}" required>
+          </label>
+          <button class="button" type="submit">Salvar</button>
+        </form>
+      </div>
+
+      <div class="card" style="flex: 1; min-width: 280px;">
+        <h2>Novo compromisso</h2>
+        <form method="post" action="{{ url_for('finance.create_finance_commitment') }}">
+          <label>
+            Nome
+            <input type="text" name="name" required>
+          </label>
+          <label>
+            Valor
+            <input type="text" name="amount" placeholder="99.90" required>
+          </label>
+          <label>
+            Vencimento
+            <input type="date" name="due_date" required>
+          </label>
+          <label>
+            Tipo
+            <select name="kind">
+              <option value="fixed">fixed</option>
+              <option value="variable">variable</option>
+            </select>
+          </label>
+          <button class="button" type="submit">Cadastrar</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Compromissos</h2>
+      {% if commitments %}
+        <div class="row" style="flex-direction: column;">
+          {% for commitment in commitments %}
+            <div class="card" style="padding: 16px; background: rgba(255,255,255,0.02);">
+              <div class="xp-meta">
+                <strong>{{ commitment.name }}</strong>
+                <span>{{ commitment.kind }}</span>
+              </div>
+              <div class="xp-meta">
+                <span>R$ {{ commitment.amount }}</span>
+                <span>{{ commitment.due_date }}</span>
+              </div>
+              <div class="xp-meta">
+                <span>{% if commitment.is_paid %}Pago{% else %}Pendente{% endif %}</span>
+                <form method="post" action="{{ url_for('finance.toggle_commitment_paid', commitment_id=commitment.id) }}" style="display: inline;">
+                  <button class="button secondary" type="submit">{% if commitment.is_paid %}Marcar pendente{% else %}Marcar pago{% endif %}</button>
+                </form>
+                <form method="post" action="{{ url_for('finance.delete_finance_commitment', commitment_id=commitment.id) }}" style="display: inline;">
+                  <button class="button secondary" type="submit">Excluir</button>
+                </form>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="muted">Nenhum compromisso cadastrado.</p>
+      {% endif %}
+    </section>
+  </div>
+{% endblock %}

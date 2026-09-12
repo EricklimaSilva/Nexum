@@ -5,6 +5,7 @@ from app.auth.routes import auth_bp
 from app.config import Config
 from app.dashboard.routes import dashboard_bp
 from app.extensions import db, login_manager, migrate
+from app.finance.routes import finance_bp
 
 
 @login_manager.user_loader
@@ -22,6 +23,7 @@ def create_app() -> Flask:
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
+    app.register_blueprint(finance_bp)
 
     @app.errorhandler(404)
     def page_not_found(error):

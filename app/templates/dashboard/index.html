@@ -46,8 +46,14 @@
     <section class="module-grid">
       <article class="card module-card">
         <span class="module-tag">Finanças</span>
-        <h3>Em breve</h3>
-        <p>Expansão do núcleo de controle pessoal.</p>
+        <h3><a href="{{ url_for('finance.index') }}">Safe Spend</a></h3>
+        <p>
+          {% if finance_summary %}
+            {{ finance_summary['daily_safe_spend'] }} / dia
+          {% else %}
+            Configurar
+          {% endif %}
+        </p>
       </article>
 
       <article class="card module-card">

@@ -2,6 +2,7 @@ from flask import abort
 
 from app.auth.models import User
 from app.extensions import db
+from app.finance.services import create_initial_finance_settings
 from app.progression.services import create_initial_progress
 
 
@@ -28,6 +29,7 @@ def create_user(email: str, password: str, name: str) -> User:
     db.session.add(profile)
 
     create_initial_progress(user)
+    create_initial_finance_settings(user)
     db.session.commit()
 
     return user

@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template
 from flask_login import current_user, login_required
 
+from app.finance.services import calculate_safe_spend
 from app.progression.services import (
     get_progress_percentage,
     get_user_progress,
@@ -20,6 +21,10 @@ def index():
     xp_next = get_xp_needed_for_next_level(progress.total_xp, progress.level)
     progress_percent = get_progress_percentage(progress.total_xp, progress.level)
 
+    finance_summary = None
+    if getattr(current_user, "finance_settings", None) is not None:
+        finance_summary = calculate_safe_spend(current_user)
+
     return render_template(
         "dashboard/index.html",
         progress=progress,
@@ -27,6 +32,7 @@ def index():
         xp_next=xp_next,
         progress_percent=progress_percent,
         user_name=current_user.profile.name,
+        finance_summary=finance_summary,
     )
 
 
