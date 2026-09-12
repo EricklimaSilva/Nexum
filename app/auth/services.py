@@ -2,6 +2,7 @@ from flask import abort
 
 from app.auth.models import User
 from app.extensions import db
+from app.progression.services import create_initial_progress
 
 
 def create_user(email: str, password: str, name: str) -> User:
@@ -25,6 +26,8 @@ def create_user(email: str, password: str, name: str) -> User:
 
     profile = UserProfile(user_id=user.id, name=name)
     db.session.add(profile)
+
+    create_initial_progress(user)
     db.session.commit()
 
     return user
