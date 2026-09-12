@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+  <div class="auth-layout">
+    <div class="card auth-box">
+      <h2>Login</h2>
+      <p class="muted">Acesse sua jornada e continue sua evolução.</p>
+
+      <form method="post">
+        <label>
+          E-mail
+          <input type="email" name="email" required>
+        </label>
+
+        <label>
+          Senha
+          <input type="password" name="password" required>
+        </label>
+
+        <button class="button" type="submit">Entrar</button>
+      </form>
+
+      <p class="muted">Ainda não possui conta? <a href="{{ url_for('auth.register') }}">Crie uma agora</a>.</p>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Página não encontrada{% endblock %}
+
+{% block content %}
+  <div class="card auth-box">
+    <h2>404</h2>
+    <p class="muted">A página que você tentou acessar não existe.</p>
+    <a class="button secondary" href="{{ url_for('auth.login') }}">Voltar ao início</a>
+  </div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Erro interno{% endblock %}
+
+{% block content %}
+  <div class="card auth-box">
+    <h2>500</h2>
+    <p class="muted">Ocorreu um erro interno. Tente novamente mais tarde.</p>
+    <a class="button secondary" href="{{ url_for('auth.login') }}">Voltar ao início</a>
+  </div>
+{% endblock %}
