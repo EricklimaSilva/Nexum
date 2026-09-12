@@ -2,6 +2,7 @@ from flask import Flask, render_template
 
 from app.auth.models import User
 from app.auth.routes import auth_bp
+from app.body.routes import body_bp
 from app.config import Config
 from app.dashboard.routes import dashboard_bp
 from app.extensions import db, login_manager, migrate
@@ -24,6 +25,7 @@ def create_app() -> Flask:
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(finance_bp)
+    app.register_blueprint(body_bp)
 
     @app.errorhandler(404)
     def page_not_found(error):

@@ -58,8 +58,17 @@
 
       <article class="card module-card">
         <span class="module-tag">Corpo</span>
-        <h3>Em breve</h3>
-        <p>Desenvolvimento físico e bem-estar.</p>
+        <h3><a href="{{ url_for('body.index') }}">Physical Status</a></h3>
+        <p>
+          {% if body_status['latest_measurement'] %}
+            {{ body_status['latest_measurement'].weight_kg }} kg
+            {% if body_status['bmi'] is not none %}
+              · BMI {{ body_status['bmi'] }}
+            {% endif %}
+          {% else %}
+            Configurar
+          {% endif %}
+        </p>
       </article>
 
       <article class="card module-card">

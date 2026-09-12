@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template
 from flask_login import current_user, login_required
 
+from app.body.services import get_body_status_for_user
 from app.finance.services import calculate_safe_spend
 from app.progression.services import (
     get_progress_percentage,
@@ -25,6 +26,8 @@ def index():
     if getattr(current_user, "finance_settings", None) is not None:
         finance_summary = calculate_safe_spend(current_user)
 
+    body_status = get_body_status_for_user(current_user)
+
     return render_template(
         "dashboard/index.html",
         progress=progress,
@@ -33,6 +36,7 @@ def index():
         progress_percent=progress_percent,
         user_name=current_user.profile.name,
         finance_summary=finance_summary,
+        body_status=body_status,
     )
 
 

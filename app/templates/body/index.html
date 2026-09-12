@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Physical Status | Nexum{% endblock %}
+
+{% block content %}
+  <div class="dashboard-shell">
+    <section class="card hero-panel">
+      <div class="identity-row">
+        <div>
+          <p class="eyebrow">NEXUM // PHYSICAL STATUS</p>
+          <h1>Body Status</h1>
+        </div>
+        <div class="badge-rank">
+          {% if status['bmi'] is not none %}
+            BMI {{ status['bmi'] }}
+          {% else %}
+            NO DATA
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-block">
+          <span class="label">Altura</span>
+          <strong>
+            {% if status['profile'] %}
+              {{ status['profile'].height_cm }} cm
+            {% else %}
+              —
+            {% endif %}
+          </strong>
+        </div>
+
+        <div class="stat-block">
+          <span class="label">Peso atual</span>
+          <strong>
+            {% if status['latest_measurement'] %}
+              {{ status['latest_measurement'].weight_kg }} kg
+            {% else %}
+              —
+            {% endif %}
+          </strong>
+        </div>
+
+        <div class="stat-block">
+          <span class="label">Registros</span>
+          <strong>{{ history|length }}</strong>
+        </div>
+      </div>
+
+      <div class="xp-panel">
+        <div class="xp-meta">
+          <span>Indicador corporal</span>
+          <span>
+            {% if status['bmi'] is not none %}
+              BMI {{ status['bmi'] }}
+            {% else %}
+              Configure altura e registre seu peso
+            {% endif %}
+          </span>
+        </div>
+      </div>
+
+      <p class="muted" style="margin-top: 14px;">
+        O BMI é apenas um indicador de triagem para adultos e não substitui avaliação profissional.
+      </p>
+    </section>
+
+    <section class="row">
+      <div class="card" style="flex: 1; min-width: 280px;">
+        <h2>Perfil corporal</h2>
+        <form method="post" action="{{ url_for('body.update_profile') }}">
+          <label>
+            Altura em centímetros
+            <input
+              type="text"
+              name="height_cm"
+              placeholder="174"
+              value="{% if status['profile'] %}{{ status['profile'].height_cm }}{% endif %}"
+              required
+            >
+          </label>
+          <button class="button" type="submit">Salvar altura</button>
+        </form>
+      </div>
+
+      <div class="card" style="flex: 1; min-width: 280px;">
+        <h2>Novo peso</h2>
+        <form method="post" action="{{ url_for('body.create_measurement') }}">
+          <label>
+            Peso em kg
+            <input type="text" name="weight_kg" placeholder="86.5" required>
+          </label>
+          <button class="button" type="submit">Registrar peso</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Histórico de peso</h2>
+
+      {% if history %}
+        <div class="row" style="flex-direction: column;">
+          {% for measurement in history %}
+            <div class="card" style="padding: 16px; background: rgba(255,255,255,0.02);">
+              <div class="xp-meta">
+                <strong>{{ measurement.weight_kg }} kg</strong>
+                <span>{{ measurement.measured_at.strftime('%d/%m/%Y %H:%M') }}</span>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="muted">Nenhuma medição cadastrada.</p>
+      {% endif %}
+    </section>
+  </div>
+{% endblock %}
