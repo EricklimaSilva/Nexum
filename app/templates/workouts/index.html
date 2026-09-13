@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+
+{% block title %}Workouts | Nexum{% endblock %}
+
+{% block content %}
+  <div class="dashboard-shell">
+    <section class="card hero-panel">
+      <div class="identity-row">
+        <div>
+          <p class="eyebrow">NEXUM // WORKOUT SYSTEM</p>
+          <h1>Calisthenics Log</h1>
+        </div>
+        <div class="badge-rank">
+          {{ sessions|length }} TREINOS
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-block">
+          <span class="label">Treinos registrados</span>
+          <strong>{{ sessions|length }}</strong>
+        </div>
+
+        <div class="stat-block">
+          <span class="label">Treino selecionado</span>
+          <strong>
+            {% if selected_session %}
+              {{ selected_session.name }}
+            {% else %}
+              —
+            {% endif %}
+          </strong>
+        </div>
+
+        <div class="stat-block">
+          <span class="label">Exercícios</span>
+          <strong>
+            {% if selected_session %}
+              {{ selected_session.exercises|length }}
+            {% else %}
+              0
+            {% endif %}
+          </strong>
+        </div>
+      </div>
+
+      <div class="xp-panel">
+        <div class="xp-meta">
+          <span>Registro de performance</span>
+          <span>Repetições e tempo por série</span>
+        </div>
+      </div>
+
+      <p class="muted" style="margin-top: 14px;">
+        Registre sessões, exercícios e séries. Progressões, PRs e XP serão conectados em fases futuras.
+      </p>
+    </section>
+
+    <section class="row">
+      <div class="card" style="flex: 1; min-width: 280px;">
+        <h2>Novo treino</h2>
+        <form method="post" action="{{ url_for('workouts.create_session') }}">
+          <label>
+            Nome do treino
+            <input type="text" name="name" placeholder="Pull Day" maxlength="120" required>
+          </label>
+
+          <label>
+            Observações
+            <textarea name="notes" rows="4" placeholder="Foco, sensação, progressão ou observações do treino"></textarea>
+          </label>
+
+          <button class="button" type="submit">Criar treino</button>
+        </form>
+      </div>
+
+      <div class="card" style="flex: 1; min-width: 280px;">
+        <h2>Histórico</h2>
+
+        {% if sessions %}
+          <div class="row" style="flex-direction: column;">
+            {% for workout in sessions %}
+              <a
+                class="card"
+                style="padding: 16px; background: rgba(255,255,255,0.02); text-decoration: none; color: inherit;"
+                href="{{ url_for('workouts.index', session_id=workout.id) }}"
+              >
+                <div class="xp-meta">
+                  <strong>{{ workout.name }}</strong>
+                  <span>{{ (workout.performed_at|sao_paulo_time).strftime('%d/%m/%Y %H:%M') }}</span>
+                </div>
+                <p class="muted" style="margin: 8px 0 0;">
+                  {{ workout.exercises|length }} exercício(s)
+                </p>
+              </a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="muted">Nenhum treino registrado ainda.</p>
+        {% endif %}
+      </div>
+    </section>
+
+    {% if selected_session %}
+      <section class="card">
+        <div class="identity-row">
+          <div>
+            <p class="eyebrow">TREINO ATIVO</p>
+            <h2>{{ selected_session.name }}</h2>
+          </div>
+          <div class="badge-rank">
+            {{ (selected_session.performed_at|sao_paulo_time).strftime('%d/%m') }}
+          </div>
+        </div>
+
+        {% if selected_session.notes %}
+          <p class="muted">{{ selected_session.notes }}</p>
+        {% endif %}
+
+        <form
+          method="post"
+          action="{{ url_for('workouts.create_exercise', session_id=selected_session.id) }}"
+          style="margin-top: 20px;"
+        >
+          <div class="row">
+            <label style="flex: 2; min-width: 220px;">
+              Exercício
+              <input type="text" name="name" placeholder="Pull-up" maxlength="120" required>
+            </label>
+
+            <label style="flex: 1; min-width: 180px;">
+              Categoria
+              <select name="category">
+                <option value="pull">Pull</option>
+                <option value="push">Push</option>
+                <option value="core">Core</option>
+                <option value="legs">Legs</option>
+                <option value="skill">Skill</option>
+                <option value="mobility">Mobility</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+          </div>
+
+          <button class="button" type="submit">Adicionar exercício</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Exercícios do treino</h2>
+
+        {% if selected_session.exercises %}
+          <div class="row" style="flex-direction: column;">
+            {% for exercise in selected_session.exercises %}
+              <div class="card" style="padding: 18px; background: rgba(255,255,255,0.02);">
+                <div class="xp-meta">
+                  <strong>{{ exercise.name }}</strong>
+                  <span>{{ exercise.category|upper }}</span>
+                </div>
+
+                {% if exercise.sets %}
+                  <div style="margin-top: 14px;">
+                    {% for workout_set in exercise.sets %}
+                      <div class="xp-meta" style="padding: 7px 0;">
+                        <span>Série {{ workout_set.set_number }}</span>
+                        <strong>
+                          {% if workout_set.reps is not none %}
+                            {{ workout_set.reps }} rep(s)
+                            {% endif %}
+                          {% if workout_set.reps is not none and workout_set.duration_seconds is not none %}
+                            ·
+                            {% endif %}
+                          {% if workout_set.duration_seconds is not none %}
+                            {{ workout_set.duration_seconds }} s
+                            {% endif %}
+                        </strong>
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  <p class="muted">Nenhuma série registrada.</p>
+                {% endif %}
+
+                <form
+                  method="post"
+                  action="{{ url_for('workouts.create_set', exercise_id=exercise.id) }}"
+                  style="margin-top: 16px;"
+                >
+                  <input type="hidden" name="session_id" value="{{ selected_session.id }}">
+
+                  <div class="row">
+                    <label style="flex: 1; min-width: 150px;">
+                      Repetições
+                      <input type="number" name="reps" min="1" placeholder="5">
+                    </label>
+
+                    <label style="flex: 1; min-width: 150px;">
+                      Tempo em segundos
+                      <input type="number" name="duration_seconds" min="1" placeholder="30">
+                    </label>
+                  </div>
+
+                  <button class="button" type="submit">Registrar série</button>
+                </form>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="muted">Adicione o primeiro exercício deste treino.</p>
+        {% endif %}
+      </section>
+    {% else %}
+      <section class="card">
+        <h2>Treino</h2>
+        <p class="muted">
+          Crie um novo treino ou selecione um item do histórico para registrar exercícios e séries.
+        </p>
+      </section>
+    {% endif %}
+  </div>
+{% endblock %}

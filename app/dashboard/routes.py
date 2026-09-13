@@ -3,6 +3,7 @@ from flask_login import current_user, login_required
 
 from app.body.services import get_body_status_for_user
 from app.finance.services import calculate_safe_spend
+from app.workouts.services import list_workout_sessions_for_user
 from app.progression.services import (
     get_progress_percentage,
     get_user_progress,
@@ -27,6 +28,8 @@ def index():
         finance_summary = calculate_safe_spend(current_user)
 
     body_status = get_body_status_for_user(current_user)
+    recent_workouts = list_workout_sessions_for_user(current_user, limit=1)
+    latest_workout = recent_workouts[0] if recent_workouts else None
 
     return render_template(
         "dashboard/index.html",
@@ -37,6 +40,7 @@ def index():
         user_name=current_user.profile.name,
         finance_summary=finance_summary,
         body_status=body_status,
+        latest_workout=latest_workout,
     )
 
 
