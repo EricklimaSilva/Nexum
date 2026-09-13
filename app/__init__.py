@@ -9,6 +9,8 @@ from app.config import Config
 from app.dashboard.routes import dashboard_bp
 from app.extensions import db, login_manager, migrate
 from app.finance.routes import finance_bp
+from app.goals.models import Goal
+from app.goals.routes import goals_bp
 
 
 @login_manager.user_loader
@@ -31,6 +33,7 @@ def create_app() -> Flask:
     app.register_blueprint(finance_bp)
     app.register_blueprint(body_bp)
     app.register_blueprint(workouts_bp)
+    app.register_blueprint(goals_bp)
 
     @app.errorhandler(404)
     def page_not_found(error):
