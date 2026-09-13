@@ -85,8 +85,17 @@
 
       <article class="card module-card">
         <span class="module-tag">Metas</span>
-        <h3>Em breve</h3>
-        <p>Objetivos e evolução contínua.</p>
+        <h3><a href="{{ url_for('goals.index') }}">Personal Goals</a></h3>
+        <p>
+          {% if featured_goal %}
+            {{ featured_goal.title }} · {{ featured_goal.progress_percent }}%
+          {% else %}
+            Criar primeira meta
+          {% endif %}
+        </p>
+        <p class="muted" style="margin-top: 8px;">
+          {{ active_goal_count }} ativa(s) · {{ completed_goal_count }} concluída(s)
+        </p>
       </article>
 
       <article class="card module-card">

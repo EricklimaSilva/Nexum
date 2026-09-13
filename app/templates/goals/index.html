@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+
+{% block title %}Goals | Nexum{% endblock %}
+
+{% block content %}
+  {% set category_labels = {
+    'personal': 'Pessoal',
+    'career': 'Carreira',
+    'study': 'Estudos',
+    'finance': 'Finanças',
+    'health': 'Saúde',
+    'relationship': 'Relacionamentos',
+    'other': 'Outro'
+  } %}
+
+  <div class="dashboard-shell">
+    <section class="card hero-panel">
+      <div class="identity-row">
+        <div>
+          <p class="eyebrow">NEXUM // GOAL SYSTEM</p>
+          <h1>Personal Goals</h1>
+        </div>
+        <div class="badge-rank">
+          {{ active_goals|length }} ATIVAS
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-block">
+          <span class="label">Metas totais</span>
+          <strong>{{ goals|length }}</strong>
+        </div>
+
+        <div class="stat-block">
+          <span class="label">Em andamento</span>
+          <strong>{{ active_goals|length }}</strong>
+        </div>
+
+        <div class="stat-block">
+          <span class="label">Concluídas</span>
+          <strong>{{ completed_goals|length }}</strong>
+        </div>
+      </div>
+
+      <div class="xp-panel">
+        <div class="xp-meta">
+          <span>Direção e progresso</span>
+          <span>0–99% + conclusão explícita</span>
+        </div>
+      </div>
+
+      <p class="muted" style="margin-top: 14px;">
+        Transforme objetivos pessoais em progresso rastreável. XP e recompensas serão conectados em fases futuras.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Nova meta</h2>
+
+      <form method="post" action="{{ url_for('goals.create') }}">
+        <div class="row">
+          <label style="flex: 2; min-width: 240px;">
+            Título
+            <input
+              type="text"
+              name="title"
+              maxlength="160"
+              placeholder="Concluir minha formação em dados"
+              required
+            >
+          </label>
+
+          <label style="flex: 1; min-width: 180px;">
+            Categoria
+            <select name="category">
+              {% for category in categories %}
+                <option value="{{ category }}">{{ category_labels.get(category, category|capitalize) }}</option>
+              {% endfor %}
+            </select>
+          </label>
+
+          <label style="flex: 1; min-width: 180px;">
+            Prazo
+            <input type="date" name="target_date">
+          </label>
+        </div>
+
+        <label>
+          Descrição
+          <textarea
+            name="description"
+            rows="3"
+            placeholder="Defina o resultado que você quer alcançar e por que ele importa."
+          ></textarea>
+        </label>
+
+        <button class="button" type="submit">Criar meta</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="identity-row">
+        <div>
+          <p class="eyebrow">OBJETIVOS ATIVOS</p>
+          <h2>Em andamento</h2>
+        </div>
+        <div class="badge-rank">{{ active_goals|length }}</div>
+      </div>
+
+      {% if active_goals %}
+        <div class="row" style="flex-direction: column; margin-top: 18px;">
+          {% for goal in active_goals %}
+            <article class="card" style="padding: 18px; background: rgba(255,255,255,0.02);">
+              <div class="identity-row">
+                <div>
+                  <p class="eyebrow">{{ category_labels.get(goal.category, goal.category|upper) }}</p>
+                  <h3 style="margin: 4px 0 0;">{{ goal.title }}</h3>
+                </div>
+                <div class="badge-rank">{{ goal.progress_percent }}%</div>
+              </div>
+
+              {% if goal.description %}
+                <p class="muted" style="margin: 12px 0;">{{ goal.description }}</p>
+              {% endif %}
+
+              <div class="xp-panel" style="margin-top: 14px;">
+                <div class="xp-meta">
+                  <span>Progresso</span>
+                  <span>{{ goal.progress_percent }}%</span>
+                </div>
+                <div style="height: 8px; margin-top: 10px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden;">
+                  <div style="height: 100%; width: {{ goal.progress_percent }}%; background: currentColor;"></div>
+                </div>
+              </div>
+
+              <div class="xp-meta" style="margin-top: 12px;">
+                <span>
+                  {% if goal.target_date %}
+                    Prazo: {{ goal.target_date.strftime('%d/%m/%Y') }}
+                  {% else %}
+                    Sem prazo definido
+                  {% endif %}
+                </span>
+                <span>STATUS // ACTIVE</span>
+              </div>
+
+              <div class="row" style="margin-top: 16px; align-items: end;">
+                <form
+                  method="post"
+                  action="{{ url_for('goals.update_progress', goal_id=goal.id) }}"
+                  style="flex: 1; min-width: 220px;"
+                >
+                  <label>
+                    Atualizar progresso
+                    <input
+                      type="number"
+                      name="progress_percent"
+                      min="0"
+                      max="99"
+                      value="{{ goal.progress_percent }}"
+                      required
+                    >
+                  </label>
+                  <button class="button" type="submit">Atualizar</button>
+                </form>
+
+                <form
+                  method="post"
+                  action="{{ url_for('goals.complete', goal_id=goal.id) }}"
+                  style="flex: 1; min-width: 220px;"
+                >
+                  <button class="button" type="submit" style="width: 100%;">
+                    Concluir meta
+                  </button>
+                </form>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="muted" style="margin-top: 18px;">
+          Nenhuma meta ativa. Crie seu próximo objetivo acima.
+        </p>
+      {% endif %}
+    </section>
+
+    <section class="card">
+      <div class="identity-row">
+        <div>
+          <p class="eyebrow">ARCHIVE // COMPLETED</p>
+          <h2>Concluídas</h2>
+        </div>
+        <div class="badge-rank">{{ completed_goals|length }}</div>
+      </div>
+
+      {% if completed_goals %}
+        <div class="row" style="flex-direction: column; margin-top: 18px;">
+          {% for goal in completed_goals %}
+            <article class="card" style="padding: 18px; background: rgba(255,255,255,0.02); opacity: 0.88;">
+              <div class="identity-row">
+                <div>
+                  <p class="eyebrow">{{ category_labels.get(goal.category, goal.category|upper) }}</p>
+                  <h3 style="margin: 4px 0 0;">{{ goal.title }}</h3>
+                </div>
+                <div class="badge-rank">100%</div>
+              </div>
+
+              {% if goal.description %}
+                <p class="muted" style="margin: 12px 0;">{{ goal.description }}</p>
+              {% endif %}
+
+              <div class="xp-meta" style="margin-top: 12px;">
+                <span>STATUS // COMPLETED</span>
+                <span>
+                  {% if goal.completed_at %}
+                    {{ (goal.completed_at|sao_paulo_time).strftime('%d/%m/%Y %H:%M') }}
+                  {% else %}
+                    Concluída
+                  {% endif %}
+                </span>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="muted" style="margin-top: 18px;">
+          Nenhuma meta concluída ainda.
+        </p>
+      {% endif %}
+    </section>
+  </div>
+{% endblock %}
