@@ -73,8 +73,14 @@
 
       <article class="card module-card">
         <span class="module-tag">Treinos</span>
-        <h3>Em breve</h3>
-        <p>Rotina e progresso de desempenho.</p>
+        <h3><a href="{{ url_for('workouts.index') }}">Calisthenics Log</a></h3>
+        <p>
+          {% if latest_workout %}
+            {{ latest_workout.name }} · {{ (latest_workout.performed_at|sao_paulo_time).strftime('%d/%m %H:%M') }}
+          {% else %}
+            Registrar primeiro treino
+          {% endif %}
+        </p>
       </article>
 
       <article class="card module-card">
