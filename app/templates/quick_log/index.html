@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block title %}Quick Log | Nexum{% endblock %}
+
+{% block content %}
+  {% set category_labels = {
+    'personal': 'Pessoal',
+    'career': 'Carreira',
+    'study': 'Estudos',
+    'finance': 'Finanças',
+    'health': 'Saúde',
+    'relationship': 'Relacionamentos',
+    'other': 'Outro'
+  } %}
+
+  <div class="dashboard-shell">
+    <section class="card hero-panel">
+      <div class="identity-row">
+        <div>
+          <p class="eyebrow">NEXUM // QUICK LOG</p>
+          <h1>Registro rápido</h1>
+        </div>
+
+        <div class="badge-rank">
+          +{{ quick_log_xp }} XP
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-block">
+          <span class="label">Registros recentes</span>
+          <strong>{{ logs|length }}</strong>
+        </div>
+
+        <div class="stat-block">
+          <span class="label">XP por registro</span>
+          <strong>+{{ quick_log_xp }}</strong>
+        </div>
+
+        <div class="stat-block">
+          <span class="label">Sistema</span>
+          <strong>ATIVO</strong>
+        </div>
+      </div>
+
+      <div class="xp-panel">
+        <div class="xp-meta">
+          <span>Ação → Registro → XP</span>
+          <span>Progresso instantâneo</span>
+        </div>
+      </div>
+
+      <p class="muted" style="margin-top: 14px;">
+        Registre rapidamente uma ação concluída e transforme consistência em progresso dentro do Nexum.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Novo registro</h2>
+
+      <form method="post" action="{{ url_for('quick_log.create') }}">
+        <div class="row">
+          <label style="flex: 2; min-width: 240px;">
+            O que você fez?
+            <input
+              type="text"
+              name="action"
+              maxlength="160"
+              placeholder="Ex.: Estudei SQL por 1 hora"
+              required
+              autofocus
+            >
+          </label>
+
+          <label style="flex: 1; min-width: 180px;">
+            Categoria
+            <select name="category">
+              <option value="">Sem categoria</option>
+              <option value="personal">Pessoal</option>
+              <option value="career">Carreira</option>
+              <option value="study">Estudos</option>
+              <option value="finance">Finanças</option>
+              <option value="health">Saúde</option>
+              <option value="relationship">Relacionamentos</option>
+              <option value="other">Outro</option>
+            </select>
+          </label>
+        </div>
+
+        <button class="button" type="submit">
+          Registrar +{{ quick_log_xp }} XP
+        </button>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="identity-row">
+        <div>
+          <p class="eyebrow">ACTIVITY // HISTORY</p>
+          <h2>Últimos registros</h2>
+        </div>
+
+        <div class="badge-rank">
+          {{ logs|length }}
+        </div>
+      </div>
+
+      {% if logs %}
+        <div class="row" style="flex-direction: column; margin-top: 18px;">
+          {% for log in logs %}
+            <article
+              class="card"
+              style="padding: 18px; background: rgba(255,255,255,0.02);"
+            >
+              <div class="identity-row">
+                <div>
+                  <p class="eyebrow">
+                    {% if log.category %}
+                      {{ category_labels.get(log.category, log.category|upper) }}
+                    {% else %}
+                      QUICK LOG
+                    {% endif %}
+                  </p>
+
+                  <h3 style="margin: 4px 0 0;">
+                    {{ log.action }}
+                  </h3>
+                </div>
+
+                <div class="badge-rank">
+                  +{{ log.xp_awarded }} XP
+                </div>
+              </div>
+
+              <div class="xp-meta" style="margin-top: 12px;">
+                <span>STATUS // COMPLETED</span>
+                <span>
+                  {{ (log.created_at|sao_paulo_time).strftime('%d/%m/%Y %H:%M') }}
+                </span>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="muted" style="margin-top: 18px;">
+          Nenhum registro ainda. Complete uma ação e registre seu primeiro progresso.
+        </p>
+      {% endif %}
+    </section>
+  </div>
+{% endblock %}

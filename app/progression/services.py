@@ -156,6 +156,5 @@ def add_xp(user, amount: int, reason: Optional[str] = None) -> UserProgress:
 
     sync_progress(progress)
     db.session.add(progress)
-    db.session.commit()
 
     return progress

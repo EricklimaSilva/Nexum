@@ -18,6 +18,7 @@ class User(UserMixin, db.Model):
 
     profile = db.relationship("UserProfile", back_populates="user", uselist=False, cascade="all, delete-orphan")
     goals = db.relationship("Goal", back_populates="user", cascade="all, delete-orphan")
+    quick_logs = db.relationship("QuickLog", back_populates="user", cascade="all, delete-orphan")
 
     def set_password(self, password: str) -> None:
         self.password_hash = generate_password_hash(password)

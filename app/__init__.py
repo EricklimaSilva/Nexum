@@ -11,6 +11,8 @@ from app.extensions import db, login_manager, migrate
 from app.finance.routes import finance_bp
 from app.goals.models import Goal
 from app.goals.routes import goals_bp
+from app.quick_log.models import QuickLog
+from app.quick_log.routes import quick_log_bp
 
 
 @login_manager.user_loader
@@ -34,6 +36,7 @@ def create_app() -> Flask:
     app.register_blueprint(body_bp)
     app.register_blueprint(workouts_bp)
     app.register_blueprint(goals_bp)
+    app.register_blueprint(quick_log_bp)
 
     @app.errorhandler(404)
     def page_not_found(error):
