@@ -45,6 +45,9 @@ class ProductionConfig(Config):
         secret = os.getenv("SECRET_KEY")
         if not secret or secret in DEFAULT_INSECURE_SECRETS:
             raise ValueError("ProductionConfig requires a non-default SECRET_KEY.")
+        database_url = os.getenv("DATABASE_URL")
+        if not database_url or not database_url.strip():
+            raise ValueError("ProductionConfig requires DATABASE_URL to be set.")
         return super().__new__(cls)
 
     @classmethod
@@ -52,6 +55,9 @@ class ProductionConfig(Config):
         secret = os.getenv("SECRET_KEY")
         if not secret or secret in DEFAULT_INSECURE_SECRETS:
             raise ValueError("ProductionConfig requires a non-default SECRET_KEY.")
+        database_url = os.getenv("DATABASE_URL")
+        if not database_url or not database_url.strip():
+            raise ValueError("ProductionConfig requires DATABASE_URL to be set.")
         return None
 
 

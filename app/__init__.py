@@ -42,6 +42,13 @@ def create_app(config_override=None) -> Flask:
 
     app.jinja_env.filters["sao_paulo_time"] = to_sao_paulo_time
 
+    @app.after_request
+    def add_security_headers(response):
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "SAMEORIGIN"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        return response
+
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(finance_bp)
