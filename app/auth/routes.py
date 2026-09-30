@@ -1,15 +1,17 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
-from flask_login import login_required, login_user, logout_user
+from flask_login import current_user, login_required, login_user, logout_user
 
 from app.auth.models import User
 from app.auth.services import create_user, get_user_by_email
 from app.common.validators import is_valid_email, sanitize_text
+from app.extensions import limiter
 
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
+@limiter.limit("5 per minute", key_func=lambda: current_user.get_id() if current_user.is_authenticated else request.remote_addr)
 def login():
     if request.method == "POST":
         email = sanitize_text(request.form.get("email"))
@@ -40,6 +42,7 @@ def login():
 
 
 @auth_bp.route("/register", methods=["GET", "POST"])
+@limiter.limit("5 per minute", key_func=lambda: current_user.get_id() if current_user.is_authenticated else request.remote_addr)
 def register():
     if request.method == "POST":
         email = sanitize_text(request.form.get("email"))

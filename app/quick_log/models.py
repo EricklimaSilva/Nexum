@@ -1,5 +1,4 @@
-from datetime import datetime
-
+from app.common.utils import utc_now_naive
 from app.extensions import db
 
 
@@ -40,7 +39,7 @@ class QuickLog(db.Model):
     created_at = db.Column(
         db.DateTime,
         nullable=False,
-        default=datetime.utcnow,
+        default=utc_now_naive,
     )
 
     user = db.relationship(

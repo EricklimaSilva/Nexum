@@ -1,7 +1,6 @@
-from datetime import datetime
-
 from sqlalchemy import CheckConstraint
 
+from app.common.utils import utc_now_naive
 from app.extensions import db
 
 
@@ -19,11 +18,11 @@ class BodyProfile(db.Model):
         nullable=False,
     )
     height_cm = db.Column(db.Numeric(5, 2), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=utc_now_naive, nullable=False)
     updated_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow,
+        default=utc_now_naive,
+        onupdate=utc_now_naive,
         nullable=False,
     )
 
@@ -54,8 +53,8 @@ class BodyMeasurement(db.Model):
         index=True,
     )
     weight_kg = db.Column(db.Numeric(6, 2), nullable=False)
-    measured_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    measured_at = db.Column(db.DateTime, default=utc_now_naive, nullable=False)
+    created_at = db.Column(db.DateTime, default=utc_now_naive, nullable=False)
 
     user = db.relationship(
         "User",

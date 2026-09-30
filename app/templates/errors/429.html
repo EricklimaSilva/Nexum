@@ -1,13 +1,15 @@
 {% extends 'base.html' %}
 
-{% block title %}Página não encontrada{% endblock %}
+{% block title %}Muitas tentativas{% endblock %}
 
 {% block content %}
   <div class="error-page">
     <div class="card error-card">
-      <p class="eyebrow">Ops</p>
-      <h1 class="error-code">404</h1>
-      <p class="muted">A página que você tentou acessar não existe ou foi movida.</p>
+      <p class="eyebrow">Atenção</p>
+      <h1 class="error-code">429</h1>
+      <p class="muted">
+        Você fez muitas tentativas em pouco tempo. Aguarde alguns instantes e tente novamente com calma.
+      </p>
       <div class="mt-2">
         <a class="button-secondary" href="{{ url_for('dashboard.index') if current_user.is_authenticated else url_for('auth.login') }}">Voltar</a>
       </div>

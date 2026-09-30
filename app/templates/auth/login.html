@@ -1,28 +1,31 @@
 {% extends 'base.html' %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Login | Nexum{% endblock %}
 
 {% block content %}
-  <div class="auth-layout">
-    <div class="card auth-box">
-      <h2>Login</h2>
-      <p class="muted">Acesse sua jornada e continue sua evolução.</p>
+  <div class="auth-shell">
+    <div class="card auth-card">
+      <p class="eyebrow">Bem-vindo</p>
+      <h1>Login</h1>
+      <p class="muted mt-1">Acesse sua jornada e continue sua evolução.</p>
 
-      <form method="post">
-        <label>
-          E-mail
-          <input type="email" name="email" required>
+      <form method="post" class="stack mt-2">
+        {{ csrf_token() }}
+
+        <label class="form-field">
+          <span>E-mail</span>
+          <input type="email" name="email" autocomplete="email" required aria-label="E-mail">
         </label>
 
-        <label>
-          Senha
-          <input type="password" name="password" required>
+        <label class="form-field">
+          <span>Senha</span>
+          <input type="password" name="password" autocomplete="current-password" required aria-label="Senha">
         </label>
 
         <button class="button" type="submit">Entrar</button>
       </form>
 
-      <p class="muted">Ainda não possui conta? <a href="{{ url_for('auth.register') }}">Crie uma agora</a>.</p>
+      <p class="muted mt-2">Ainda não possui conta? <a href="{{ url_for('auth.register') }}">Crie uma agora</a>.</p>
     </div>
   </div>
 {% endblock %}

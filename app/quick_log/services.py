@@ -1,6 +1,29 @@
+import re
+import unicodedata
+from datetime import timedelta
+
+from app.common.utils import utc_now_naive
 from app.extensions import db
-from app.progression.services import add_xp
+from app.progression.services import award_xp_for_event
 from app.quick_log.models import QuickLog
+
+VALID_QUICK_LOG_CATEGORIES = {
+    "personal",
+    "career",
+    "study",
+    "finance",
+    "health",
+    "relationship",
+    "other",
+}
+
+
+def _normalize_action_for_dedupe(value: str) -> str:
+    if value is None:
+        return ""
+    normalized = unicodedata.normalize("NFKC", str(value)).strip().casefold()
+    normalized = re.sub(r"\s+", " ", normalized)
+    return normalized
 
 
 def _clean_action(value) -> str:
@@ -29,6 +52,9 @@ def _clean_category(value):
 
     if len(category) > 40:
         raise ValueError("Categoria deve ter no máximo 40 caracteres.")
+
+    if category not in VALID_QUICK_LOG_CATEGORIES:
+        raise ValueError("Categoria inválida. Use: personal, career, study, finance, health, relationship ou other.")
 
     return category
 
@@ -74,6 +100,16 @@ def create_quick_log(
     clean_action = _clean_action(action)
     clean_category = _clean_category(category)
     clean_xp = _parse_xp(xp_awarded)
+    normalized_action = _normalize_action_for_dedupe(clean_action)
+
+    recent_logs = (
+        QuickLog.query.filter_by(user_id=user.id)
+        .filter(QuickLog.created_at >= utc_now_naive() - timedelta(minutes=10))
+        .all()
+    )
+    for recent in recent_logs:
+        if _normalize_action_for_dedupe(recent.action) == normalized_action:
+            raise ValueError("A mesma ação foi registrada recentemente. Espere 10 minutos antes de repetir.")
 
     quick_log = QuickLog(
         user_id=user.id,
@@ -83,12 +119,15 @@ def create_quick_log(
     )
 
     db.session.add(quick_log)
+    db.session.flush()
 
     if clean_xp > 0:
-        add_xp(
+        award_xp_for_event(
             user,
+            "quick_log",
+            quick_log.id,
             clean_xp,
-            reason=f"quick_log:{clean_action}",
+            f"quick_log:{clean_action}",
         )
 
     return quick_log

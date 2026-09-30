@@ -1,5 +1,5 @@
 """Módulo de progressão do usuário do Nexum."""
 
-from app.progression.models import UserProgress
+from app.progression.models import UserProgress, XPEvent
 
-__all__ = ["UserProgress"]
+__all__ = ["UserProgress", "XPEvent"]

@@ -1,55 +1,55 @@
 {% extends 'base.html' %}
 
-{% block title %}Physical Status | Nexum{% endblock %}
+{% block title %}Body | Nexum{% endblock %}
 
 {% block content %}
-  <div class="dashboard-shell">
+  <div class="app-shell">
     <section class="card hero-panel">
-      <div class="identity-row">
+      <div class="page-header">
         <div>
-          <p class="eyebrow">NEXUM // PHYSICAL STATUS</p>
-          <h1>Body Status</h1>
+          <p class="eyebrow">NEXUM // BODY</p>
+          <h1>Status corporal</h1>
         </div>
-        <div class="badge-rank">
+        <span class="badge">
           {% if status['bmi'] is not none %}
             BMI {{ status['bmi'] }}
           {% else %}
-            NO DATA
+            SEM DADO
           {% endif %}
-        </div>
+        </span>
       </div>
 
-      <div class="stats-grid">
-        <div class="stat-block">
-          <span class="label">Altura</span>
-          <strong>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="stat-label">Altura</span>
+          <div class="stat-value">
             {% if status['profile'] %}
               {{ status['profile'].height_cm }} cm
             {% else %}
               —
             {% endif %}
-          </strong>
+          </div>
         </div>
 
-        <div class="stat-block">
-          <span class="label">Peso atual</span>
-          <strong>
+        <div class="stat-card">
+          <span class="stat-label">Peso atual</span>
+          <div class="stat-value">
             {% if status['latest_measurement'] %}
               {{ status['latest_measurement'].weight_kg }} kg
             {% else %}
               —
             {% endif %}
-          </strong>
+          </div>
         </div>
 
-        <div class="stat-block">
-          <span class="label">Registros</span>
-          <strong>{{ history|length }}</strong>
+        <div class="stat-card">
+          <span class="stat-label">Registros</span>
+          <div class="stat-value">{{ history|length }}</div>
         </div>
       </div>
 
-      <div class="xp-panel">
-        <div class="xp-meta">
+      <div class="mt-3">
+        <div class="progress-meta">
           <span>Indicador corporal</span>
           <span>
             {% if status['bmi'] is not none %}
@@ -61,34 +61,38 @@
         </div>
       </div>
 
-      <p class="muted" style="margin-top: 14px;">
-        O BMI é apenas um indicador de triagem para adultos e não substitui avaliação profissional.
-      </p>
+      <p class="muted mt-2">O BMI é apenas um indicador de triagem para adultos e não substitui avaliação profissional.</p>
     </section>
 
-    <section class="row">
-      <div class="card" style="flex: 1; min-width: 280px;">
-        <h2>Perfil corporal</h2>
-        <form method="post" action="{{ url_for('body.update_profile') }}">
-          <label>
-            Altura em centímetros
-            <input
-              type="text"
-              name="height_cm"
-              placeholder="174"
-              value="{% if status['profile'] %}{{ status['profile'].height_cm }}{% endif %}"
-              required
-            >
+    <section class="form-grid">
+      <div class="card">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Perfil</p>
+            <h2>Altura</h2>
+          </div>
+        </div>
+        <form method="post" action="{{ url_for('body.update_profile') }}" class="stack mt-2">
+          {{ csrf_token() }}
+          <label class="form-field">
+            <span>Altura em centímetros</span>
+            <input type="text" name="height_cm" placeholder="174" value="{% if status['profile'] %}{{ status['profile'].height_cm }}{% endif %}" required>
           </label>
           <button class="button" type="submit">Salvar altura</button>
         </form>
       </div>
 
-      <div class="card" style="flex: 1; min-width: 280px;">
-        <h2>Novo peso</h2>
-        <form method="post" action="{{ url_for('body.create_measurement') }}">
-          <label>
-            Peso em kg
+      <div class="card">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Registro</p>
+            <h2>Novo peso</h2>
+          </div>
+        </div>
+        <form method="post" action="{{ url_for('body.create_measurement') }}" class="stack mt-2">
+          {{ csrf_token() }}
+          <label class="form-field">
+            <span>Peso em kg</span>
             <input type="text" name="weight_kg" placeholder="86.5" required>
           </label>
           <button class="button" type="submit">Registrar peso</button>
@@ -97,21 +101,26 @@
     </section>
 
     <section class="card">
-      <h2>Histórico de peso</h2>
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">Histórico</p>
+          <h2>Peso</h2>
+        </div>
+      </div>
 
       {% if history %}
-        <div class="row" style="flex-direction: column;">
+        <div class="list-panel mt-2">
           {% for measurement in history %}
-            <div class="card" style="padding: 16px; background: rgba(255,255,255,0.02);">
-              <div class="xp-meta">
+            <div class="list-item">
+              <div class="data-row">
                 <strong>{{ measurement.weight_kg }} kg</strong>
-                <span>{{ measurement.measured_at.strftime('%d/%m/%Y %H:%M') }}</span>
+                <span class="muted">{{ measurement.measured_at.strftime('%d/%m/%Y %H:%M') }}</span>
               </div>
             </div>
           {% endfor %}
         </div>
       {% else %}
-        <p class="muted">Nenhuma medição cadastrada.</p>
+        <div class="empty-state mt-2">Nenhuma medição cadastrada.</div>
       {% endif %}
     </section>
   </div>

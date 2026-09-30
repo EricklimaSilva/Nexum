@@ -3,88 +3,102 @@
 {% block title %}Finance | Nexum{% endblock %}
 
 {% block content %}
-  <div class="dashboard-shell">
+  <div class="app-shell">
     <section class="card hero-panel">
-      <div class="identity-row">
+      <div class="page-header">
         <div>
           <p class="eyebrow">NEXUM // FINANCE</p>
           <h1>Safe Spend</h1>
         </div>
-        <div class="badge-rank">{{ safe_spend['daily_safe_spend'] }} / dia</div>
+        <span class="badge">{{ safe_spend['daily_safe_spend'] }} / dia</span>
       </div>
 
-      <div class="stats-grid">
-        <div class="stat-block">
-          <span class="label">Saldo atual</span>
-          <strong>R$ {{ settings.current_balance }}</strong>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="stat-label">Saldo atual</span>
+          <div class="stat-value">R$ {{ settings.current_balance }}</div>
         </div>
-        <div class="stat-block">
-          <span class="label">Próximo pagamento</span>
-          <strong>{{ safe_spend['next_payday'] }}</strong>
+        <div class="stat-card">
+          <span class="stat-label">Próximo pagamento</span>
+          <div class="stat-value">{{ safe_spend['next_payday'] }}</div>
         </div>
-        <div class="stat-block">
-          <span class="label">Dias restantes</span>
-          <strong>{{ safe_spend['remaining_days'] }}</strong>
+        <div class="stat-card">
+          <span class="stat-label">Dias restantes</span>
+          <div class="stat-value">{{ safe_spend['remaining_days'] }}</div>
         </div>
       </div>
 
-      <div class="xp-panel">
-        <div class="xp-meta">
+      <div class="mt-3">
+        <div class="progress-meta">
           <span>Compromissos pendentes</span>
           <span>R$ {{ safe_spend['pending_total'] }}</span>
         </div>
-        <div class="xp-meta">
+        <div class="progress-meta">
           <span>Protegido para poupança</span>
           <span>R$ {{ safe_spend['protected_savings'] }}</span>
         </div>
-        <div class="xp-meta">
+        <div class="progress-meta">
           <span>Disponível para gastar</span>
           <span>R$ {{ safe_spend['available_to_spend'] }}</span>
         </div>
       </div>
     </section>
 
-    <section class="row">
-      <div class="card" style="flex: 1; min-width: 280px;">
-        <h2>Configurações</h2>
-        <form method="post" action="{{ url_for('finance.update_settings') }}">
-          <label>
-            Saldo atual
+    <section class="form-grid">
+      <div class="card">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Configuração</p>
+            <h2>Configurações</h2>
+          </div>
+        </div>
+
+        <form method="post" action="{{ url_for('finance.update_settings') }}" class="stack mt-2">
+          {{ csrf_token() }}
+          <label class="form-field">
+            <span>Saldo atual</span>
             <input type="text" name="current_balance" value="{{ settings.current_balance }}" required>
           </label>
-          <label>
-            Valor protegido
+          <label class="form-field">
+            <span>Valor protegido</span>
             <input type="text" name="protected_savings" value="{{ settings.protected_savings }}" required>
           </label>
-          <label>
-            Primeiro payday
+          <label class="form-field">
+            <span>Primeiro payday</span>
             <input type="number" name="payday_first" min="1" max="31" value="{{ settings.payday_first }}" required>
           </label>
-          <label>
-            Segundo payday
+          <label class="form-field">
+            <span>Segundo payday</span>
             <input type="number" name="payday_second" min="1" max="31" value="{{ settings.payday_second }}" required>
           </label>
           <button class="button" type="submit">Salvar</button>
         </form>
       </div>
 
-      <div class="card" style="flex: 1; min-width: 280px;">
-        <h2>Novo compromisso</h2>
-        <form method="post" action="{{ url_for('finance.create_finance_commitment') }}">
-          <label>
-            Nome
+      <div class="card">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Novo</p>
+            <h2>Compromisso</h2>
+          </div>
+        </div>
+
+        <form method="post" action="{{ url_for('finance.create_finance_commitment') }}" class="stack mt-2">
+          {{ csrf_token() }}
+          <label class="form-field">
+            <span>Nome</span>
             <input type="text" name="name" required>
           </label>
-          <label>
-            Valor
+          <label class="form-field">
+            <span>Valor</span>
             <input type="text" name="amount" placeholder="99.90" required>
           </label>
-          <label>
-            Vencimento
+          <label class="form-field">
+            <span>Vencimento</span>
             <input type="date" name="due_date" required>
           </label>
-          <label>
-            Tipo
+          <label class="form-field">
+            <span>Tipo</span>
             <select name="kind">
               <option value="fixed">fixed</option>
               <option value="variable">variable</option>
@@ -96,33 +110,46 @@
     </section>
 
     <section class="card">
-      <h2>Compromissos</h2>
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">Compromissos</p>
+          <h2>Resumo</h2>
+        </div>
+      </div>
+
       {% if commitments %}
-        <div class="row" style="flex-direction: column;">
+        <div class="list-panel mt-2">
           {% for commitment in commitments %}
-            <div class="card" style="padding: 16px; background: rgba(255,255,255,0.02);">
-              <div class="xp-meta">
-                <strong>{{ commitment.name }}</strong>
-                <span>{{ commitment.kind }}</span>
+            <div class="list-item">
+              <div class="data-row">
+                <div>
+                  <p class="eyebrow mb-0">{{ commitment.kind }}</p>
+                  <h3>{{ commitment.name }}</h3>
+                </div>
+                <span class="badge">{% if commitment.is_paid %}Pago{% else %}Pendente{% endif %}</span>
               </div>
-              <div class="xp-meta">
+
+              <div class="progress-meta mt-1">
                 <span>R$ {{ commitment.amount }}</span>
                 <span>{{ commitment.due_date }}</span>
               </div>
-              <div class="xp-meta">
-                <span>{% if commitment.is_paid %}Pago{% else %}Pendente{% endif %}</span>
-                <form method="post" action="{{ url_for('finance.toggle_commitment_paid', commitment_id=commitment.id) }}" style="display: inline;">
-                  <button class="button secondary" type="submit">{% if commitment.is_paid %}Marcar pendente{% else %}Marcar pago{% endif %}</button>
+
+              <div class="form-grid mt-2">
+                <form method="post" action="{{ url_for('finance.toggle_commitment_paid', commitment_id=commitment.id) }}">
+                  {{ csrf_token() }}
+                  <button class="button-secondary" type="submit">{% if commitment.is_paid %}Marcar pendente{% else %}Marcar pago{% endif %}</button>
                 </form>
-                <form method="post" action="{{ url_for('finance.delete_finance_commitment', commitment_id=commitment.id) }}" style="display: inline;">
-                  <button class="button secondary" type="submit">Excluir</button>
+
+                <form method="post" action="{{ url_for('finance.delete_finance_commitment', commitment_id=commitment.id) }}">
+                  {{ csrf_token() }}
+                  <button class="button-danger" type="submit">Excluir</button>
                 </form>
               </div>
             </div>
           {% endfor %}
         </div>
       {% else %}
-        <p class="muted">Nenhum compromisso cadastrado.</p>
+        <div class="empty-state mt-2">Nenhum compromisso cadastrado.</div>
       {% endif %}
     </section>
   </div>

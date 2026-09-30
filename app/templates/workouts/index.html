@@ -3,70 +3,71 @@
 {% block title %}Workouts | Nexum{% endblock %}
 
 {% block content %}
-  <div class="dashboard-shell">
+  <div class="app-shell">
     <section class="card hero-panel">
-      <div class="identity-row">
+      <div class="page-header">
         <div>
           <p class="eyebrow">NEXUM // WORKOUT SYSTEM</p>
           <h1>Calisthenics Log</h1>
         </div>
-        <div class="badge-rank">
-          {{ sessions|length }} TREINOS
-        </div>
+        <span class="badge">{{ sessions|length }} treinos</span>
       </div>
 
-      <div class="stats-grid">
-        <div class="stat-block">
-          <span class="label">Treinos registrados</span>
-          <strong>{{ sessions|length }}</strong>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="stat-label">Treinos registrados</span>
+          <div class="stat-value">{{ sessions|length }}</div>
         </div>
-
-        <div class="stat-block">
-          <span class="label">Treino selecionado</span>
-          <strong>
+        <div class="stat-card">
+          <span class="stat-label">Treino selecionado</span>
+          <div class="stat-value">
             {% if selected_session %}
               {{ selected_session.name }}
             {% else %}
               —
             {% endif %}
-          </strong>
+          </div>
         </div>
-
-        <div class="stat-block">
-          <span class="label">Exercícios</span>
-          <strong>
+        <div class="stat-card">
+          <span class="stat-label">Exercícios</span>
+          <div class="stat-value">
             {% if selected_session %}
               {{ selected_session.exercises|length }}
             {% else %}
               0
             {% endif %}
-          </strong>
+          </div>
         </div>
       </div>
 
-      <div class="xp-panel">
-        <div class="xp-meta">
+      <div class="mt-3">
+        <div class="progress-meta">
           <span>Registro de performance</span>
           <span>Repetições e tempo por série</span>
         </div>
       </div>
 
-      <p class="muted" style="margin-top: 14px;">
-        Registre sessões, exercícios e séries. Progressões, PRs e XP serão conectados em fases futuras.
-      </p>
+      <p class="muted mt-2">Registre sessões, exercícios e séries. Progressões, PRs e desenvolvimento pessoal em um só lugar.</p>
     </section>
 
-    <section class="row">
-      <div class="card" style="flex: 1; min-width: 280px;">
-        <h2>Novo treino</h2>
-        <form method="post" action="{{ url_for('workouts.create_session') }}">
-          <label>
-            Nome do treino
+    <section class="form-grid">
+      <div class="card">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Novo</p>
+            <h2>Treino</h2>
+          </div>
+        </div>
+
+        <form method="post" action="{{ url_for('workouts.create_session') }}" class="stack mt-2">
+          {{ csrf_token() }}
+          <label class="form-field">
+            <span>Nome do treino</span>
             <input type="text" name="name" placeholder="Pull Day" maxlength="120" required>
           </label>
 
-          <label>
-            Observações
+          <label class="form-field">
+            <span>Observações</span>
             <textarea name="notes" rows="4" placeholder="Foco, sensação, progressão ou observações do treino"></textarea>
           </label>
 
@@ -74,62 +75,59 @@
         </form>
       </div>
 
-      <div class="card" style="flex: 1; min-width: 280px;">
-        <h2>Histórico</h2>
+      <div class="card">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Histórico</p>
+            <h2>Treinos</h2>
+          </div>
+        </div>
 
         {% if sessions %}
-          <div class="row" style="flex-direction: column;">
+          <div class="list-panel mt-2">
             {% for workout in sessions %}
-              <a
-                class="card"
-                style="padding: 16px; background: rgba(255,255,255,0.02); text-decoration: none; color: inherit;"
-                href="{{ url_for('workouts.index', session_id=workout.id) }}"
-              >
-                <div class="xp-meta">
-                  <strong>{{ workout.name }}</strong>
-                  <span>{{ (workout.performed_at|sao_paulo_time).strftime('%d/%m/%Y %H:%M') }}</span>
+              <a class="list-item" href="{{ url_for('workouts.index', session_id=workout.id) }}">
+                <div class="data-row">
+                  <div>
+                    <p class="eyebrow mb-0">Treino</p>
+                    <strong>{{ workout.name }}</strong>
+                  </div>
+                  <span class="muted">{{ (workout.performed_at|sao_paulo_time).strftime('%d/%m/%Y %H:%M') }}</span>
                 </div>
-                <p class="muted" style="margin: 8px 0 0;">
-                  {{ workout.exercises|length }} exercício(s)
-                </p>
+                <p class="muted mt-1">{{ workout.exercises|length }} exercício(s)</p>
               </a>
             {% endfor %}
           </div>
         {% else %}
-          <p class="muted">Nenhum treino registrado ainda.</p>
+          <div class="empty-state mt-2">Nenhum treino registrado ainda.</div>
         {% endif %}
       </div>
     </section>
 
     {% if selected_session %}
       <section class="card">
-        <div class="identity-row">
+        <div class="page-header">
           <div>
-            <p class="eyebrow">TREINO ATIVO</p>
+            <p class="eyebrow">Treino ativo</p>
             <h2>{{ selected_session.name }}</h2>
           </div>
-          <div class="badge-rank">
-            {{ (selected_session.performed_at|sao_paulo_time).strftime('%d/%m') }}
-          </div>
+          <span class="badge">{{ (selected_session.performed_at|sao_paulo_time).strftime('%d/%m') }}</span>
         </div>
 
         {% if selected_session.notes %}
-          <p class="muted">{{ selected_session.notes }}</p>
+          <p class="muted mt-2">{{ selected_session.notes }}</p>
         {% endif %}
 
-        <form
-          method="post"
-          action="{{ url_for('workouts.create_exercise', session_id=selected_session.id) }}"
-          style="margin-top: 20px;"
-        >
-          <div class="row">
-            <label style="flex: 2; min-width: 220px;">
-              Exercício
+        <form method="post" action="{{ url_for('workouts.create_exercise', session_id=selected_session.id) }}" class="stack mt-2">
+          {{ csrf_token() }}
+          <div class="form-grid">
+            <label class="form-field">
+              <span>Exercício</span>
               <input type="text" name="name" placeholder="Pull-up" maxlength="120" required>
             </label>
 
-            <label style="flex: 1; min-width: 180px;">
-              Categoria
+            <label class="form-field">
+              <span>Categoria</span>
               <select name="category">
                 <option value="pull">Pull</option>
                 <option value="push">Push</option>
@@ -147,55 +145,57 @@
       </section>
 
       <section class="card">
-        <h2>Exercícios do treino</h2>
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Exercícios</p>
+            <h2>Detalhes do treino</h2>
+          </div>
+        </div>
 
         {% if selected_session.exercises %}
-          <div class="row" style="flex-direction: column;">
+          <div class="list-panel mt-2">
             {% for exercise in selected_session.exercises %}
-              <div class="card" style="padding: 18px; background: rgba(255,255,255,0.02);">
-                <div class="xp-meta">
+              <div class="list-item">
+                <div class="data-row">
                   <strong>{{ exercise.name }}</strong>
-                  <span>{{ exercise.category|upper }}</span>
+                  <span class="badge">{{ exercise.category|upper }}</span>
                 </div>
 
                 {% if exercise.sets %}
-                  <div style="margin-top: 14px;">
+                  <div class="stack mt-2">
                     {% for workout_set in exercise.sets %}
-                      <div class="xp-meta" style="padding: 7px 0;">
+                      <div class="progress-meta">
                         <span>Série {{ workout_set.set_number }}</span>
                         <strong>
                           {% if workout_set.reps is not none %}
                             {{ workout_set.reps }} rep(s)
-                            {% endif %}
+                          {% endif %}
                           {% if workout_set.reps is not none and workout_set.duration_seconds is not none %}
                             ·
-                            {% endif %}
+                          {% endif %}
                           {% if workout_set.duration_seconds is not none %}
                             {{ workout_set.duration_seconds }} s
-                            {% endif %}
+                          {% endif %}
                         </strong>
                       </div>
                     {% endfor %}
                   </div>
                 {% else %}
-                  <p class="muted">Nenhuma série registrada.</p>
+                  <p class="muted mt-2">Nenhuma série registrada.</p>
                 {% endif %}
 
-                <form
-                  method="post"
-                  action="{{ url_for('workouts.create_set', exercise_id=exercise.id) }}"
-                  style="margin-top: 16px;"
-                >
+                <form method="post" action="{{ url_for('workouts.create_set', exercise_id=exercise.id) }}" class="stack mt-2">
+                  {{ csrf_token() }}
                   <input type="hidden" name="session_id" value="{{ selected_session.id }}">
 
-                  <div class="row">
-                    <label style="flex: 1; min-width: 150px;">
-                      Repetições
+                  <div class="form-grid">
+                    <label class="form-field">
+                      <span>Repetições</span>
                       <input type="number" name="reps" min="1" placeholder="5">
                     </label>
 
-                    <label style="flex: 1; min-width: 150px;">
-                      Tempo em segundos
+                    <label class="form-field">
+                      <span>Tempo em segundos</span>
                       <input type="number" name="duration_seconds" min="1" placeholder="30">
                     </label>
                   </div>
@@ -206,15 +206,18 @@
             {% endfor %}
           </div>
         {% else %}
-          <p class="muted">Adicione o primeiro exercício deste treino.</p>
+          <div class="empty-state mt-2">Adicione o primeiro exercício deste treino.</div>
         {% endif %}
       </section>
     {% else %}
       <section class="card">
-        <h2>Treino</h2>
-        <p class="muted">
-          Crie um novo treino ou selecione um item do histórico para registrar exercícios e séries.
-        </p>
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Treino</p>
+            <h2>Seleção</h2>
+          </div>
+        </div>
+        <p class="muted mt-2">Crie um novo treino ou selecione um item do histórico para registrar exercícios e séries.</p>
       </section>
     {% endif %}
   </div>

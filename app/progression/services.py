@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Optional
 
 from app.extensions import db
-from app.progression.models import UserProgress
+from app.progression.models import UserProgress, XPEvent
 
 XP_PER_LEVEL_BASE = 100
 XP_PER_LEVEL_STEP = 50
@@ -136,12 +136,50 @@ def create_initial_progress(user) -> UserProgress:
     return progress
 
 
-def add_xp(user, amount: int, reason: Optional[str] = None) -> UserProgress:
-    """Adiciona XP ao progresso do usuário.
+def award_xp_for_event(user, source_type: str, source_id: int, delta: int, reason: str) -> XPEvent:
+    """Concede XP para um evento de origem única e registra um ledger auditável sem commit implícito."""
+    if user is None:
+        raise ValueError("Usuário obrigatório.")
+    if not isinstance(source_type, str) or not source_type.strip():
+        raise ValueError("source_type deve ser uma string não vazia.")
+    if source_id is None or isinstance(source_id, bool):
+        raise ValueError("source_id deve ser informado.")
+    if delta is None or isinstance(delta, bool) or not isinstance(delta, int):
+        raise ValueError("delta deve ser um inteiro válido.")
+    if delta <= 0:
+        raise ValueError("delta deve ser positivo.")
+    if not isinstance(reason, str) or not reason.strip():
+        raise ValueError("reason deve ser uma string não vazia.")
 
-    O motivo (reason) foi mantido como parâmetro reservado para compatibilidade,
-    mas ainda não há ledger/event log de XP nesta fase.
-    """
+    existing = (
+        XPEvent.query.filter_by(user_id=user.id, source_type=source_type, source_id=source_id)
+        .first()
+    )
+    if existing is not None:
+        return existing
+
+    progress = get_user_progress(user)
+    event = XPEvent(
+        user_id=user.id,
+        source_type=source_type.strip(),
+        source_id=int(source_id),
+        delta=delta,
+        reason=reason.strip(),
+    )
+    db.session.add(event)
+    db.session.flush()
+
+    progress.total_xp += delta
+    if progress.total_xp < 0:
+        raise ValueError("O total de XP não pode ficar negativo.")
+
+    sync_progress(progress)
+    db.session.add(progress)
+    return event
+
+
+def add_xp(user, amount: int, reason: Optional[str] = None) -> UserProgress:
+    """Compatibilidade para XP direto sem ledger. Mantém o comportamento atual."""
     if amount is None or isinstance(amount, bool) or not isinstance(amount, int):
         raise ValueError("A quantidade de XP deve ser um inteiro válido.")
     if amount < 0:

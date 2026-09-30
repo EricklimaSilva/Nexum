@@ -1,42 +1,42 @@
 {% extends 'base.html' %}
 
-{% block title %}Nexum Status{% endblock %}
+{% block title %}Nexum | Dashboard{% endblock %}
 
 {% block content %}
-  <div class="dashboard-shell">
+  <div class="app-shell">
     <section class="card hero-panel">
-      <div class="identity-row">
+      <div class="page-header">
         <div>
           <p class="eyebrow">NEXUM // STATUS</p>
           <h1>{{ user_name }}</h1>
         </div>
-        <div class="badge-rank">Rank {{ progress.rank }}</div>
+        <span class="badge">Rank {{ progress.rank }}</span>
       </div>
 
-      <div class="stats-grid">
-        <div class="stat-block">
-          <span class="label">Level</span>
-          <strong>{{ progress.level }}</strong>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="stat-label">Level</span>
+          <div class="stat-value">{{ progress.level }}</div>
         </div>
-        <div class="stat-block">
-          <span class="label">Rank</span>
-          <strong>{{ progress.rank }}</strong>
+        <div class="stat-card">
+          <span class="stat-label">Rank</span>
+          <div class="stat-value">{{ progress.rank }}</div>
         </div>
-        <div class="stat-block">
-          <span class="label">XP total</span>
-          <strong>{{ progress.total_xp }} XP</strong>
+        <div class="stat-card">
+          <span class="stat-label">XP total</span>
+          <div class="stat-value">{{ progress.total_xp }} XP</div>
         </div>
       </div>
 
-      <div class="xp-panel">
-        <div class="xp-meta">
+      <div class="mt-3">
+        <div class="progress-meta">
           <span>XP no nível</span>
           <span>{{ xp_current }} / {{ xp_next }} XP</span>
         </div>
-        <div class="progress-track">
-          <div class="progress-fill" style="width: {{ progress_percent }}%;"></div>
-        </div>
-        <div class="xp-meta secondary">
+        {% with value=progress_percent %}
+          {% include 'includes/progress_bar.html' %}
+        {% endwith %}
+        <div class="progress-meta">
           <span>Próximo nível</span>
           <span>{{ progress_percent|round(1) }}%</span>
         </div>
@@ -93,7 +93,7 @@
             Criar primeira meta
           {% endif %}
         </p>
-        <p class="muted" style="margin-top: 8px;">
+        <p class="muted mt-1">
           {{ active_goal_count }} ativa(s) · {{ completed_goal_count }} concluída(s)
         </p>
       </article>

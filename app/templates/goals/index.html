@@ -13,65 +13,59 @@
     'other': 'Outro'
   } %}
 
-  <div class="dashboard-shell">
+  <div class="app-shell">
     <section class="card hero-panel">
-      <div class="identity-row">
+      <div class="page-header">
         <div>
           <p class="eyebrow">NEXUM // GOAL SYSTEM</p>
-          <h1>Personal Goals</h1>
+          <h1>Metas pessoais</h1>
         </div>
-        <div class="badge-rank">
-          {{ active_goals|length }} ATIVAS
+        <span class="badge">{{ active_goals|length }} ativas</span>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="stat-label">Metas totais</span>
+          <div class="stat-value">{{ goals|length }}</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Em andamento</span>
+          <div class="stat-value">{{ active_goals|length }}</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Concluídas</span>
+          <div class="stat-value">{{ completed_goals|length }}</div>
         </div>
       </div>
 
-      <div class="stats-grid">
-        <div class="stat-block">
-          <span class="label">Metas totais</span>
-          <strong>{{ goals|length }}</strong>
-        </div>
-
-        <div class="stat-block">
-          <span class="label">Em andamento</span>
-          <strong>{{ active_goals|length }}</strong>
-        </div>
-
-        <div class="stat-block">
-          <span class="label">Concluídas</span>
-          <strong>{{ completed_goals|length }}</strong>
-        </div>
-      </div>
-
-      <div class="xp-panel">
-        <div class="xp-meta">
+      <div class="mt-3">
+        <div class="progress-meta">
           <span>Direção e progresso</span>
           <span>0–99% + conclusão explícita</span>
         </div>
       </div>
 
-      <p class="muted" style="margin-top: 14px;">
-        Transforme objetivos pessoais em progresso rastreável. XP e recompensas serão conectados em fases futuras.
-      </p>
+      <p class="muted mt-2">Transforme objetivos pessoais em progresso rastreável. Acompanhamento claro, foco e execução.</p>
     </section>
 
     <section class="card">
-      <h2>Nova meta</h2>
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">Nova meta</p>
+          <h2>Adicionar objetivo</h2>
+        </div>
+      </div>
 
-      <form method="post" action="{{ url_for('goals.create') }}">
-        <div class="row">
-          <label style="flex: 2; min-width: 240px;">
-            Título
-            <input
-              type="text"
-              name="title"
-              maxlength="160"
-              placeholder="Concluir minha formação em dados"
-              required
-            >
+      <form method="post" action="{{ url_for('goals.create') }}" class="stack mt-2">
+        {{ csrf_token() }}
+        <div class="form-grid">
+          <label class="form-field">
+            <span>Título</span>
+            <input type="text" name="title" maxlength="160" placeholder="Concluir minha formação em dados" required>
           </label>
 
-          <label style="flex: 1; min-width: 180px;">
-            Categoria
+          <label class="form-field">
+            <span>Categoria</span>
             <select name="category">
               {% for category in categories %}
                 <option value="{{ category }}">{{ category_labels.get(category, category|capitalize) }}</option>
@@ -79,19 +73,15 @@
             </select>
           </label>
 
-          <label style="flex: 1; min-width: 180px;">
-            Prazo
+          <label class="form-field">
+            <span>Prazo</span>
             <input type="date" name="target_date">
           </label>
         </div>
 
-        <label>
-          Descrição
-          <textarea
-            name="description"
-            rows="3"
-            placeholder="Defina o resultado que você quer alcançar e por que ele importa."
-          ></textarea>
+        <label class="form-field">
+          <span>Descrição</span>
+          <textarea name="description" rows="3" placeholder="Defina o resultado que você quer alcançar e por que ele importa."></textarea>
         </label>
 
         <button class="button" type="submit">Criar meta</button>
@@ -99,41 +89,41 @@
     </section>
 
     <section class="card">
-      <div class="identity-row">
+      <div class="section-header">
         <div>
-          <p class="eyebrow">OBJETIVOS ATIVOS</p>
+          <p class="eyebrow">Objetivos ativos</p>
           <h2>Em andamento</h2>
         </div>
-        <div class="badge-rank">{{ active_goals|length }}</div>
+        <span class="badge">{{ active_goals|length }}</span>
       </div>
 
       {% if active_goals %}
-        <div class="row" style="flex-direction: column; margin-top: 18px;">
+        <div class="list-panel mt-2">
           {% for goal in active_goals %}
-            <article class="card" style="padding: 18px; background: rgba(255,255,255,0.02);">
-              <div class="identity-row">
+            <article class="list-item">
+              <div class="data-row">
                 <div>
-                  <p class="eyebrow">{{ category_labels.get(goal.category, goal.category|upper) }}</p>
-                  <h3 style="margin: 4px 0 0;">{{ goal.title }}</h3>
+                  <p class="eyebrow mb-0">{{ category_labels.get(goal.category, goal.category|upper) }}</p>
+                  <h3>{{ goal.title }}</h3>
                 </div>
-                <div class="badge-rank">{{ goal.progress_percent }}%</div>
+                <span class="badge">{{ goal.progress_percent }}%</span>
               </div>
 
               {% if goal.description %}
-                <p class="muted" style="margin: 12px 0;">{{ goal.description }}</p>
+                <p class="muted mt-1">{{ goal.description }}</p>
               {% endif %}
 
-              <div class="xp-panel" style="margin-top: 14px;">
-                <div class="xp-meta">
+              <div class="mt-2">
+                <div class="progress-meta">
                   <span>Progresso</span>
                   <span>{{ goal.progress_percent }}%</span>
                 </div>
-                <div style="height: 8px; margin-top: 10px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden;">
-                  <div style="height: 100%; width: {{ goal.progress_percent }}%; background: linear-gradient(90deg, var(--accent) 0%, var(--accent-strong) 100%);"></div>
-                </div>
+                {% with value=goal.progress_percent %}
+                  {% include 'includes/progress_bar.html' %}
+                {% endwith %}
               </div>
 
-              <div class="xp-meta" style="margin-top: 12px;">
+              <div class="progress-meta mt-2">
                 <span>
                   {% if goal.target_date %}
                     Prazo: {{ goal.target_date.strftime('%d/%m/%Y') }}
@@ -141,76 +131,60 @@
                     Sem prazo definido
                   {% endif %}
                 </span>
-                <span>STATUS // ACTIVE</span>
+                <span>Status ativo</span>
               </div>
 
-              <div class="row" style="margin-top: 16px; align-items: end;">
-                <form
-                  method="post"
-                  action="{{ url_for('goals.update_progress', goal_id=goal.id) }}"
-                  style="flex: 1; min-width: 220px;"
-                >
-                  <label>
-                    Atualizar progresso
-                    <input
-                      type="number"
-                      name="progress_percent"
-                      min="0"
-                      max="99"
-                      value="{{ goal.progress_percent }}"
-                      required
-                    >
+              <div class="form-grid mt-2">
+                <form method="post" action="{{ url_for('goals.update_progress', goal_id=goal.id) }}" class="stack">
+                  {{ csrf_token() }}
+                  <label class="form-field">
+                    <span>Atualizar progresso</span>
+                    <input type="number" name="progress_percent" min="0" max="99" value="{{ goal.progress_percent }}" required>
                   </label>
                   <button class="button" type="submit">Atualizar</button>
                 </form>
 
-                <form
-                  method="post"
-                  action="{{ url_for('goals.complete', goal_id=goal.id) }}"
-                  style="flex: 1; min-width: 220px;"
-                >
-                  <button class="button" type="submit" style="width: 100%;">
-                    Concluir meta
-                  </button>
+                <form method="post" action="{{ url_for('goals.complete', goal_id=goal.id) }}" class="stack">
+                  {{ csrf_token() }}
+                  <div class="muted mt-1">Concluir objetivo</div>
+                  <button class="button-secondary" type="submit">Concluir meta</button>
                 </form>
               </div>
             </article>
           {% endfor %}
         </div>
       {% else %}
-        <p class="muted" style="margin-top: 18px;">
-          Nenhuma meta ativa. Crie seu próximo objetivo acima.
-        </p>
+        <div class="empty-state mt-2">Nenhuma meta ativa. Crie seu próximo objetivo acima.</div>
       {% endif %}
     </section>
 
     <section class="card">
-      <div class="identity-row">
+      <div class="section-header">
         <div>
-          <p class="eyebrow">ARCHIVE // COMPLETED</p>
+          <p class="eyebrow">Concluídas</p>
           <h2>Concluídas</h2>
         </div>
-        <div class="badge-rank">{{ completed_goals|length }}</div>
+        <span class="badge">{{ completed_goals|length }}</span>
       </div>
 
       {% if completed_goals %}
-        <div class="row" style="flex-direction: column; margin-top: 18px;">
+        <div class="list-panel mt-2">
           {% for goal in completed_goals %}
-            <article class="card" style="padding: 18px; background: rgba(255,255,255,0.02); opacity: 0.88;">
-              <div class="identity-row">
+            <article class="list-item list-item--muted">
+              <div class="data-row">
                 <div>
-                  <p class="eyebrow">{{ category_labels.get(goal.category, goal.category|upper) }}</p>
-                  <h3 style="margin: 4px 0 0;">{{ goal.title }}</h3>
+                  <p class="eyebrow mb-0">{{ category_labels.get(goal.category, goal.category|upper) }}</p>
+                  <h3>{{ goal.title }}</h3>
                 </div>
-                <div class="badge-rank">100%</div>
+                <span class="badge">100%</span>
               </div>
 
               {% if goal.description %}
-                <p class="muted" style="margin: 12px 0;">{{ goal.description }}</p>
+                <p class="muted mt-1">{{ goal.description }}</p>
               {% endif %}
 
-              <div class="xp-meta" style="margin-top: 12px;">
-                <span>STATUS // COMPLETED</span>
+              <div class="progress-meta mt-2">
+                <span>Status concluído</span>
                 <span>
                   {% if goal.completed_at %}
                     {{ (goal.completed_at|sao_paulo_time).strftime('%d/%m/%Y %H:%M') }}
@@ -223,9 +197,7 @@
           {% endfor %}
         </div>
       {% else %}
-        <p class="muted" style="margin-top: 18px;">
-          Nenhuma meta concluída ainda.
-        </p>
+        <div class="empty-state mt-2">Nenhuma meta concluída ainda.</div>
       {% endif %}
     </section>
   </div>

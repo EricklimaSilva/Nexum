@@ -1,5 +1,4 @@
-from datetime import datetime
-
+from app.common.utils import utc_now_naive
 from app.extensions import db
 
 
@@ -47,12 +46,12 @@ class Goal(db.Model):
     status = db.Column(db.String(20), nullable=False, default="active")
     target_date = db.Column(db.Date, nullable=True)
     completed_at = db.Column(db.DateTime, nullable=True)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, nullable=False, default=utc_now_naive)
     updated_at = db.Column(
         db.DateTime,
         nullable=False,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow,
+        default=utc_now_naive,
+        onupdate=utc_now_naive,
     )
 
     user = db.relationship("User", back_populates="goals")

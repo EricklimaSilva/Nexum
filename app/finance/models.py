@@ -1,7 +1,6 @@
-from datetime import datetime
-
 from sqlalchemy import CheckConstraint
 
+from app.common.utils import utc_now_naive
 from app.extensions import db
 
 
@@ -20,8 +19,8 @@ class FinanceSettings(db.Model):
     protected_savings = db.Column(db.Numeric(14, 2), default=0, nullable=False)
     payday_first = db.Column(db.Integer, default=15, nullable=False)
     payday_second = db.Column(db.Integer, default=30, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=utc_now_naive, nullable=False)
+    updated_at = db.Column(db.DateTime, default=utc_now_naive, onupdate=utc_now_naive, nullable=False)
 
     user = db.relationship("User", backref=db.backref("finance_settings", uselist=False, cascade="all, delete-orphan"))
 
@@ -42,8 +41,8 @@ class FinanceCommitment(db.Model):
     due_date = db.Column(db.Date, nullable=False)
     kind = db.Column(db.String(30), nullable=False)
     is_paid = db.Column(db.Boolean, default=False, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=utc_now_naive, nullable=False)
+    updated_at = db.Column(db.DateTime, default=utc_now_naive, onupdate=utc_now_naive, nullable=False)
 
     user = db.relationship("User", backref=db.backref("finance_commitments", cascade="all, delete-orphan"))
 

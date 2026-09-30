@@ -1,7 +1,6 @@
-from datetime import datetime
-
 from sqlalchemy import CheckConstraint, UniqueConstraint
 
+from app.common.utils import utc_now_naive
 from app.extensions import db
 
 
@@ -16,9 +15,9 @@ class WorkoutSession(db.Model):
         index=True,
     )
     name = db.Column(db.String(120), nullable=False)
-    performed_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    performed_at = db.Column(db.DateTime, default=utc_now_naive, nullable=False)
     notes = db.Column(db.Text, nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=utc_now_naive, nullable=False)
 
     user = db.relationship(
         "User",
@@ -55,7 +54,7 @@ class WorkoutExercise(db.Model):
     name = db.Column(db.String(120), nullable=False)
     category = db.Column(db.String(20), nullable=False, default="other")
     order_index = db.Column(db.Integer, nullable=False, default=0)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=utc_now_naive, nullable=False)
 
     session = db.relationship(
         "WorkoutSession",
@@ -109,7 +108,7 @@ class WorkoutSet(db.Model):
     set_number = db.Column(db.Integer, nullable=False)
     reps = db.Column(db.Integer, nullable=True)
     duration_seconds = db.Column(db.Integer, nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=utc_now_naive, nullable=False)
 
     exercise = db.relationship(
         "WorkoutExercise",

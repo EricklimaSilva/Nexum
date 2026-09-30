@@ -1,8 +1,7 @@
-from datetime import datetime
-
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from app.common.utils import utc_now_naive
 from app.extensions import db
 
 
@@ -13,8 +12,8 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(255), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
     is_active = db.Column(db.Boolean, default=True, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=utc_now_naive, nullable=False)
+    updated_at = db.Column(db.DateTime, default=utc_now_naive, onupdate=utc_now_naive, nullable=False)
 
     profile = db.relationship("UserProfile", back_populates="user", uselist=False, cascade="all, delete-orphan")
     goals = db.relationship("Goal", back_populates="user", cascade="all, delete-orphan")
@@ -37,8 +36,8 @@ class UserProfile(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), unique=True, nullable=False)
     name = db.Column(db.String(120), nullable=False)
     height = db.Column(db.Float, nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=utc_now_naive, nullable=False)
+    updated_at = db.Column(db.DateTime, default=utc_now_naive, onupdate=utc_now_naive, nullable=False)
 
     user = db.relationship("User", back_populates="profile")
 

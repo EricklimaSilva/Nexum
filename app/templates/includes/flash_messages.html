@@ -1,0 +1,10 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-stack" aria-live="polite">
+      {% for category, message in messages %}
+        {% set alert_class = 'alert-success' if category == 'success' else 'alert-error' if category == 'error' else 'alert-warning' if category == 'warning' else 'alert-info' %}
+        <div class="alert {{ alert_class }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}

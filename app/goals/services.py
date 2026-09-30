@@ -1,5 +1,6 @@
-from datetime import date, datetime
+from datetime import date
 
+from app.common.utils import utc_now_naive
 from app.extensions import db
 from app.goals.models import GOAL_CATEGORIES, GOAL_STATUSES, Goal
 
@@ -128,5 +129,5 @@ def complete_goal(user, *, goal_id: int) -> Goal:
 
     goal.progress_percent = 100
     goal.status = "completed"
-    goal.completed_at = datetime.utcnow()
+    goal.completed_at = utc_now_naive()
     return goal

@@ -1,33 +1,36 @@
 {% extends 'base.html' %}
 
-{% block title %}Registrar{% endblock %}
+{% block title %}Registrar | Nexum{% endblock %}
 
 {% block content %}
-  <div class="auth-layout">
-    <div class="card auth-box">
-      <h2>Registrar</h2>
-      <p class="muted">Crie seu perfil e comece sua progressão.</p>
+  <div class="auth-shell">
+    <div class="card auth-card">
+      <p class="eyebrow">Crie seu perfil</p>
+      <h1>Registrar</h1>
+      <p class="muted mt-1">Crie seu perfil e comece sua progressão.</p>
 
-      <form method="post">
-        <label>
-          Nome
-          <input type="text" name="name" required>
+      <form method="post" class="stack mt-2">
+        {{ csrf_token() }}
+
+        <label class="form-field">
+          <span>Nome</span>
+          <input type="text" name="name" autocomplete="name" required aria-label="Nome">
         </label>
 
-        <label>
-          E-mail
-          <input type="email" name="email" required>
+        <label class="form-field">
+          <span>E-mail</span>
+          <input type="email" name="email" autocomplete="email" required aria-label="E-mail">
         </label>
 
-        <label>
-          Senha
-          <input type="password" name="password" required>
+        <label class="form-field">
+          <span>Senha</span>
+          <input type="password" name="password" autocomplete="new-password" required aria-label="Senha">
         </label>
 
         <button class="button" type="submit">Criar conta</button>
       </form>
 
-      <p class="muted">Já possui conta? <a href="{{ url_for('auth.login') }}">Faça login</a>.</p>
+      <p class="muted mt-2">Já possui conta? <a href="{{ url_for('auth.login') }}">Faça login</a>.</p>
     </div>
   </div>
 {% endblock %}
