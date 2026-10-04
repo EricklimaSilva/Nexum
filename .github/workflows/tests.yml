@@ -13,7 +13,6 @@ jobs:
     env:
       SECRET_KEY: test-secret-key-unsafe-only-for-tests
       FLASK_ENV: testing
-      DATABASE_URL: postgresql+psycopg://postgres:postgres@localhost:5432/nexum_test
 
     services:
       postgres:
@@ -57,9 +56,13 @@ jobs:
           python -m compileall app tests
 
       - name: Upgrade migrations on PostgreSQL test database
+        env:
+          DATABASE_URL: postgresql+psycopg://postgres:postgres@localhost:5432/nexum_test
         run: |
           flask db upgrade
 
       - name: Run PostgreSQL integration suite
+        env:
+          DATABASE_URL: postgresql+psycopg://postgres:postgres@localhost:5432/nexum_test
         run: |
           pytest -m postgres -v
