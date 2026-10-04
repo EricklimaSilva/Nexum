@@ -1,3 +1,4 @@
+import os
 import sys
 from pathlib import Path
 
@@ -99,7 +100,7 @@ def postgres_app():
     app = create_app({
         "TESTING": True,
         "WTF_CSRF_ENABLED": False,
-        "SQLALCHEMY_DATABASE_URI": "postgresql+psycopg://erick@localhost:5433/nexum_test",
+        "SQLALCHEMY_DATABASE_URI": os.getenv("POSTGRES_TEST_DATABASE_URL", "postgresql+psycopg://erick@localhost:5433/nexum_test"),
     })
 
     assert_safe_postgres_test_database(app)
