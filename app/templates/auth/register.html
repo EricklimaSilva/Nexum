@@ -10,7 +10,7 @@
       <p class="muted mt-1">Crie seu perfil e comece sua progressão.</p>
 
       <form method="post" class="stack mt-2">
-        {{ csrf_token() }}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <label class="form-field">
           <span>Nome</span>

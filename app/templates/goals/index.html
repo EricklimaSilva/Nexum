@@ -57,7 +57,7 @@
       </div>
 
       <form method="post" action="{{ url_for('goals.create') }}" class="stack mt-2">
-        {{ csrf_token() }}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="form-grid">
           <label class="form-field">
             <span>Título</span>
@@ -136,7 +136,7 @@
 
               <div class="form-grid mt-2">
                 <form method="post" action="{{ url_for('goals.update_progress', goal_id=goal.id) }}" class="stack">
-                  {{ csrf_token() }}
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                   <label class="form-field">
                     <span>Atualizar progresso</span>
                     <input type="number" name="progress_percent" min="0" max="99" value="{{ goal.progress_percent }}" required>
@@ -145,7 +145,7 @@
                 </form>
 
                 <form method="post" action="{{ url_for('goals.complete', goal_id=goal.id) }}" class="stack">
-                  {{ csrf_token() }}
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                   <div class="muted mt-1">Concluir objetivo</div>
                   <button class="button-secondary" type="submit">Concluir meta</button>
                 </form>

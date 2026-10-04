@@ -57,7 +57,7 @@
       </div>
 
       <form method="post" action="{{ url_for('quick_log.create') }}" class="stack mt-2">
-        {{ csrf_token() }}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="form-grid">
           <label class="form-field">
             <span>O que você fez?</span>

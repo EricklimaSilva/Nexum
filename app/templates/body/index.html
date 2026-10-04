@@ -73,7 +73,7 @@
           </div>
         </div>
         <form method="post" action="{{ url_for('body.update_profile') }}" class="stack mt-2">
-          {{ csrf_token() }}
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <label class="form-field">
             <span>Altura em centímetros</span>
             <input type="text" name="height_cm" placeholder="174" value="{% if status['profile'] %}{{ status['profile'].height_cm }}{% endif %}" required>
@@ -90,7 +90,7 @@
           </div>
         </div>
         <form method="post" action="{{ url_for('body.create_measurement') }}" class="stack mt-2">
-          {{ csrf_token() }}
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <label class="form-field">
             <span>Peso em kg</span>
             <input type="text" name="weight_kg" placeholder="86.5" required>

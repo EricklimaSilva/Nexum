@@ -60,7 +60,7 @@
         </div>
 
         <form method="post" action="{{ url_for('workouts.create_session') }}" class="stack mt-2">
-          {{ csrf_token() }}
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <label class="form-field">
             <span>Nome do treino</span>
             <input type="text" name="name" placeholder="Pull Day" maxlength="120" required>
@@ -119,7 +119,7 @@
         {% endif %}
 
         <form method="post" action="{{ url_for('workouts.create_exercise', session_id=selected_session.id) }}" class="stack mt-2">
-          {{ csrf_token() }}
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <div class="form-grid">
             <label class="form-field">
               <span>Exercício</span>
@@ -185,7 +185,7 @@
                 {% endif %}
 
                 <form method="post" action="{{ url_for('workouts.create_set', exercise_id=exercise.id) }}" class="stack mt-2">
-                  {{ csrf_token() }}
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                   <input type="hidden" name="session_id" value="{{ selected_session.id }}">
 
                   <div class="form-grid">

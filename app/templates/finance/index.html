@@ -54,7 +54,7 @@
         </div>
 
         <form method="post" action="{{ url_for('finance.update_settings') }}" class="stack mt-2">
-          {{ csrf_token() }}
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <label class="form-field">
             <span>Saldo atual</span>
             <input type="text" name="current_balance" value="{{ settings.current_balance }}" required>
@@ -84,7 +84,7 @@
         </div>
 
         <form method="post" action="{{ url_for('finance.create_finance_commitment') }}" class="stack mt-2">
-          {{ csrf_token() }}
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <label class="form-field">
             <span>Nome</span>
             <input type="text" name="name" required>
@@ -136,12 +136,12 @@
 
               <div class="form-grid mt-2">
                 <form method="post" action="{{ url_for('finance.toggle_commitment_paid', commitment_id=commitment.id) }}">
-                  {{ csrf_token() }}
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                   <button class="button-secondary" type="submit">{% if commitment.is_paid %}Marcar pendente{% else %}Marcar pago{% endif %}</button>
                 </form>
 
                 <form method="post" action="{{ url_for('finance.delete_finance_commitment', commitment_id=commitment.id) }}">
-                  {{ csrf_token() }}
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                   <button class="button-danger" type="submit">Excluir</button>
                 </form>
               </div>
