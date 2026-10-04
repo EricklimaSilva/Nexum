@@ -25,7 +25,7 @@ def clean_required_text(value, field_name: str, max_length: int) -> str:
     return cleaned
 
 
-def clean_optional_text(value, max_length: nt = 2000):
+def clean_optional_text(value, max_length: int = 2000):
     if value is None:
         return None
     cleaned = str(value).strip()
